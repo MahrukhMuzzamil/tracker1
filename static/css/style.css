@@ -387,6 +387,12 @@ body {
   letter-spacing: 0.5px;
 }
 
+.streak-of {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--txt3);
+}
+
 /* ===== CARD ===== */
 .card {
   background: var(--card);

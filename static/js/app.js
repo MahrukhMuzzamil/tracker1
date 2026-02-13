@@ -333,17 +333,17 @@ function getGoals() {
   return goals;
 }
 
-// ===== STREAKS =====
+// ===== TODAY'S STATS =====
 async function loadStreaks() {
   try {
     const res = await fetch(`/api/streaks/${currentPerson}/`);
     const d = await res.json();
-    document.getElementById('salahStreak').textContent = d.salahStreak;
-    document.getElementById('quranStreak').textContent = d.quranStreak;
-    document.getElementById('exerciseStreak').textContent = d.exerciseStreak;
+    document.getElementById('salahStreak').innerHTML = `${d.salahStreak}<span class="streak-of">/5</span>`;
+    document.getElementById('quranStreak').textContent = d.quranStreak ? 'Yes' : 'No';
+    document.getElementById('exerciseStreak').innerHTML = `${d.exerciseStreak}<span class="streak-of">/6</span>`;
     document.getElementById('totalDays').textContent = d.totalDaysTracked;
   } catch (err) {
-    console.error('Streaks failed:', err);
+    console.error('Stats failed:', err);
   }
 }
 
@@ -466,10 +466,12 @@ async function saveData() {
 
     if (res.ok) {
       showToast('Saved!');
-      loadStreaks();
-      loadWeekly();
-      loadPartner();
+      // Small delay to let database fully commit before re-reading
+      await new Promise(r => setTimeout(r, 300));
+      await Promise.all([loadStreaks(), loadWeekly(), loadPartner()]);
     } else {
+      const err = await res.json().catch(() => ({}));
+      console.error('Save response error:', err);
       showToast('Failed to save!', true);
     }
   } catch (err) {

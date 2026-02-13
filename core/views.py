@@ -118,56 +118,27 @@ def save_tracker(request, person, date_str):
 
 @require_http_methods(["GET"])
 def get_streaks(request, person):
-    """Calculate streaks for a specific person."""
+    """Get today's progress counts + total days tracked."""
     today = date.today()
-    trackers = DailyTracker.objects.filter(person=person).order_by('-date')
+    total_days = DailyTracker.objects.filter(person=person).count()
 
-    salah_streak = 0
-    quran_streak = 0
-    exercise_streak = 0
-    total_days = trackers.count()
+    # Today's actual counts
+    salah_today = 0
+    quran_today = 0
+    habits_today = 0
 
-    # Calculate streaks by checking consecutive days
-    check_date = today
-    for t in trackers:
-        if t.date > check_date:
-            continue
-        if t.date < check_date:
-            break
-        if t.all_salah:
-            salah_streak += 1
-        else:
-            break
-        check_date -= timedelta(days=1)
-
-    check_date = today
-    for t in trackers:
-        if t.date > check_date:
-            continue
-        if t.date < check_date:
-            break
-        if t.quran_read:
-            quran_streak += 1
-        else:
-            break
-        check_date -= timedelta(days=1)
-
-    check_date = today
-    for t in trackers:
-        if t.date > check_date:
-            continue
-        if t.date < check_date:
-            break
-        if t.exercise:
-            exercise_streak += 1
-        else:
-            break
-        check_date -= timedelta(days=1)
+    try:
+        t = DailyTracker.objects.get(person=person, date=today)
+        salah_today = t.salah_count
+        quran_today = 1 if t.quran_read else 0
+        habits_today = t.habit_count
+    except DailyTracker.DoesNotExist:
+        pass
 
     return JsonResponse({
-        'salahStreak': salah_streak,
-        'quranStreak': quran_streak,
-        'exerciseStreak': exercise_streak,
+        'salahStreak': salah_today,
+        'quranStreak': quran_today,
+        'exerciseStreak': habits_today,
         'totalDaysTracked': total_days,
     })
 

@@ -24,4 +24,4 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Run migrations and start gunicorn
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn tracker.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn tracker.wsgi:application --bind 0.0.0.0:8000 --workers 1 --threads 3 --timeout 120"]
