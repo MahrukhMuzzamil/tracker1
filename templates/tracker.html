@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Daily Tracker</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== USER SWITCHER (top bar) ===== -->
+    <div class="user-switcher">
+      <button class="user-btn active" data-person="sajeel">
+        <span class="user-avatar">S</span>
+        <span class="user-name">Sajeel <span class="user-city">Auckland</span></span>
+      </button>
+      <button class="user-btn" data-person="mahrukh">
+        <span class="user-avatar">M</span>
+        <span class="user-name">Mahrukh <span class="user-city">Lahore</span></span>
+      </button>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+      <h1 class="logo" id="greeting"></h1>
+      <div class="date-nav">
+        <button id="prevDay" class="nav-btn" aria-label="Previous day">&larr;</button>
+        <span id="currentDate" class="date-display"></span>
+        <button id="nextDay" class="nav-btn" aria-label="Next day">&rarr;</button>
+      </div>
+    </header>
+
+    <!-- ===== PRAYER TIMES ===== -->
+    <section class="card prayer-card" id="prayerCard">
+      <div class="prayer-header">
+        <h2 class="card-title" style="margin-bottom:0">&#128336; Prayer Times</h2>
+        <span class="prayer-next" id="nextPrayerBadge"></span>
+      </div>
+      <div class="prayer-cities">
+        <!-- Your City -->
+        <div class="prayer-city" id="myCity">
+          <div class="city-label" id="myCityLabel">Loading...</div>
+          <div class="prayer-times-grid" id="myPrayerTimes"></div>
+        </div>
+        <!-- Partner City -->
+        <div class="prayer-city partner" id="partnerCity">
+          <div class="city-label" id="partnerCityLabel">Loading...</div>
+          <div class="prayer-times-grid" id="partnerPrayerTimes"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PARTNER PEEK ===== -->
+    <section class="card partner-card" id="partnerCard">
+      <div class="partner-header">
+        <span class="partner-label" id="partnerLabel">Partner's Today</span>
+        <span class="partner-badge" id="partnerBadge">No data yet</span>
+      </div>
+      <div class="partner-stats" id="partnerStats"></div>
+    </section>
+
+    <!-- ===== STREAK BAR ===== -->
+    <section class="streak-bar">
+      <div class="streak-item">
+        <span class="streak-icon">&#9770;</span>
+        <div>
+          <span class="streak-num" id="salahStreak">0</span>
+          <span class="streak-label">Salah</span>
+        </div>
+      </div>
+      <div class="streak-item">
+        <span class="streak-icon">&#128214;</span>
+        <div>
+          <span class="streak-num" id="quranStreak">0</span>
+          <span class="streak-label">Quran</span>
+        </div>
+      </div>
+      <div class="streak-item">
+        <span class="streak-icon">&#128170;</span>
+        <div>
+          <span class="streak-num" id="exerciseStreak">0</span>
+          <span class="streak-label">Exercise</span>
+        </div>
+      </div>
+      <div class="streak-item">
+        <span class="streak-icon">&#128197;</span>
+        <div>
+          <span class="streak-num" id="totalDays">0</span>
+          <span class="streak-label">Days</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- Salah -->
+      <section class="card">
+        <h2 class="card-title">&#9770; Salah</h2>
+        <div class="salah-grid">
+          <label class="salah-item">
+            <input type="checkbox" id="salah-fajr" />
+            <div class="salah-box">
+              <span class="salah-name">Fajr</span>
+              <span class="salah-time" id="salah-time-fajr">--:--</span>
+            </div>
+          </label>
+          <label class="salah-item">
+            <input type="checkbox" id="salah-dhuhr" />
+            <div class="salah-box">
+              <span class="salah-name">Dhuhr</span>
+              <span class="salah-time" id="salah-time-dhuhr">--:--</span>
+            </div>
+          </label>
+          <label class="salah-item">
+            <input type="checkbox" id="salah-asr" />
+            <div class="salah-box">
+              <span class="salah-name">Asr</span>
+              <span class="salah-time" id="salah-time-asr">--:--</span>
+            </div>
+          </label>
+          <label class="salah-item">
+            <input type="checkbox" id="salah-maghrib" />
+            <div class="salah-box">
+              <span class="salah-name">Maghrib</span>
+              <span class="salah-time" id="salah-time-maghrib">--:--</span>
+            </div>
+          </label>
+          <label class="salah-item">
+            <input type="checkbox" id="salah-isha" />
+            <div class="salah-box">
+              <span class="salah-name">Isha</span>
+              <span class="salah-time" id="salah-time-isha">--:--</span>
+            </div>
+          </label>
+          <label class="salah-item bonus">
+            <input type="checkbox" id="salah-tahajjud" />
+            <div class="salah-box">
+              <span class="salah-name">Tahajjud</span>
+              <span class="salah-time">Bonus</span>
+            </div>
+          </label>
+        </div>
+        <div class="salah-progress">
+          <div class="progress-bar"><div class="progress-fill" id="salahProgress"></div></div>
+          <span class="progress-text" id="salahProgressText">0/5</span>
+        </div>
+      </section>
+
+      <!-- Quran -->
+      <section class="card">
+        <h2 class="card-title">&#128214; Quran</h2>
+        <label class="toggle-row">
+          <span>Read Quran today?</span>
+          <input type="checkbox" id="quran-read" />
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="quran-details">
+          <div class="input-group">
+            <label for="quran-pages">Pages</label>
+            <input type="number" id="quran-pages" min="0" max="604" value="0" inputmode="numeric" />
+          </div>
+          <div class="input-group">
+            <label for="quran-surah">Surah / Juz</label>
+            <input type="text" id="quran-surah" placeholder="e.g. Al-Baqarah" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Habits -->
+      <section class="card">
+        <h2 class="card-title">&#9989; Daily Habits</h2>
+        <div class="habits-list">
+          <label class="habit-item">
+            <input type="checkbox" id="habit-exercise" />
+            <span class="habit-icon">&#127947;</span>
+            <span>Exercise / Workout</span>
+          </label>
+          <label class="habit-item">
+            <input type="checkbox" id="habit-no_junk_food" />
+            <span class="habit-icon">&#129367;</span>
+            <span>No Junk Food</span>
+          </label>
+          <label class="habit-item">
+            <input type="checkbox" id="habit-wake_early" />
+            <span class="habit-icon">&#9728;</span>
+            <span>Woke Up Early</span>
+          </label>
+          <label class="habit-item">
+            <input type="checkbox" id="habit-dua_after_salah" />
+            <span class="habit-icon">&#128588;</span>
+            <span>Dua After Salah</span>
+          </label>
+          <label class="habit-item">
+            <input type="checkbox" id="habit-dhikr" />
+            <span class="habit-icon">&#128722;</span>
+            <span>Morning / Evening Adhkar</span>
+          </label>
+          <label class="habit-item">
+            <input type="checkbox" id="habit-sadaqah" />
+            <span class="habit-icon">&#129309;</span>
+            <span>Sadaqah / Good Deed</span>
+          </label>
+        </div>
+
+        <div class="habit-meters">
+          <div class="meter-group">
+            <label>&#128167; Water Glasses</label>
+            <div class="water-tracker" id="waterTracker">
+              <button class="water-btn" data-val="1" type="button">1</button>
+              <button class="water-btn" data-val="2" type="button">2</button>
+              <button class="water-btn" data-val="3" type="button">3</button>
+              <button class="water-btn" data-val="4" type="button">4</button>
+              <button class="water-btn" data-val="5" type="button">5</button>
+              <button class="water-btn" data-val="6" type="button">6</button>
+              <button class="water-btn" data-val="7" type="button">7</button>
+              <button class="water-btn" data-val="8" type="button">8</button>
+            </div>
+          </div>
+          <div class="meter-group">
+            <label for="sleep-hours">&#128164; Sleep Hours</label>
+            <div class="range-row">
+              <input type="range" id="sleep-hours" min="0" max="12" step="0.5" value="0" />
+              <span id="sleepDisplay" class="range-display">0h</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Goals -->
+      <section class="card">
+        <h2 class="card-title">&#127919; Today's Goals</h2>
+        <div class="goals-input-row">
+          <input type="text" id="goalInput" placeholder="Add a goal..." />
+          <button id="addGoalBtn" class="btn-add" type="button">+</button>
+        </div>
+        <ul class="goals-list" id="goalsList"></ul>
+      </section>
+
+      <!-- Mood -->
+      <section class="card">
+        <h2 class="card-title">How's Your Day?</h2>
+        <div class="mood-selector">
+          <button class="mood-btn" data-mood="1" type="button">&#128542;<span>Rough</span></button>
+          <button class="mood-btn" data-mood="2" type="button">&#128533;<span>Meh</span></button>
+          <button class="mood-btn" data-mood="3" type="button">&#128528;<span>Okay</span></button>
+          <button class="mood-btn" data-mood="4" type="button">&#128522;<span>Good</span></button>
+          <button class="mood-btn" data-mood="5" type="button">&#129321;<span>Great!</span></button>
+        </div>
+      </section>
+
+      <!-- Notes -->
+      <section class="card">
+        <h2 class="card-title">&#128221; Notes</h2>
+        <textarea id="dailyNotes" placeholder="Reflections, thoughts..."></textarea>
+      </section>
+
+      <!-- Weekly Overview -->
+      <section class="card full-width">
+        <h2 class="card-title">&#128200; This Week</h2>
+        <div class="weekly-grid" id="weeklyGrid"></div>
+      </section>
+
+    </main>
+
+    <!-- ===== FLOATING SAVE BUTTON (mobile) ===== -->
+    <button id="saveBtn" class="fab-save" type="button">
+      <span class="fab-icon">&#10003;</span>
+      <span class="fab-text">Save</span>
+    </button>
+    <div id="saveToast" class="save-toast"></div>
+
+    <footer class="footer">
+      <p>Stay consistent. Small steps lead to big changes.</p>
+    </footer>
+
+  </div>
+
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

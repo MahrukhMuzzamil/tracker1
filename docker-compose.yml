@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: sajeel-mahrukh-tracker
+    ports:
+      - "80:8000"
+    volumes:
+      - db_data:/app/db
+    environment:
+      - DJANGO_SECRET_KEY=change-this-to-a-random-secret-key-in-production
+      - DJANGO_DEBUG=False
+      - DJANGO_ALLOWED_HOSTS=*
+    restart: unless-stopped
+
+volumes:
+  db_data:
